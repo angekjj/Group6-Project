@@ -1,9 +1,0 @@
-DESCRIPTION:
-This data set shows river water quality trends at monitored river sites in New Zealand throughout three time periods; 2008-2017, 1998-2017 and 1990-2017. Measurements of nine different parameters of water quality were recorded; Nitrate-nitrogen, ammoniacal nitrogen, total nitrogen, total phosphorus, dissolved reactive phosphorus, water clarity, turbidity, E. coli and the macroinvertebrate community index. The data was collected by regional councils around New Zealand and NIWA and was published in April 2019. The data was accessed from the Ministry of the Environment’s database and is openly accessible under the Creative Commons Attribution.
-
-GOALS:
-to assess the trends in NZ river water quality over time and the direction of future change etc. also it's important in understanding what factors NZ needs to focus our conservation efforts on to improve the quality and ecosystems of our rivers
-
-VARIABLES OF INTERESTS: 
-1) 9 numerical measurements of water quality parameters: npid and nobs 
-2) 3 categorical measurements: dominant landcover, climate, and trend category
