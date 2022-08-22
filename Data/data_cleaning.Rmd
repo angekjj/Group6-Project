@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "Cleaning Data"
 author: "Angelina Chen 300608063"
 date: "2022-08-19"
 output: pdf_document
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r echo=FALSE}
-riverquality<- read.csv("Data/river-water-quality-trends-20082017-19982017-and-19902017.csv")
+riverquality<- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/river-water-quality-trends-20082017-19982017-and-19902017.csv")
 cleaned<- riverquality[,c("s_id","np_id_name","np_id_units","n_obs","dominant_landcover","long","lat","trend_category2","percent_annual_change2")]
 
 
@@ -42,6 +42,11 @@ readydata<- merge(readydata,turbidity,by="s_id")
 stackdata<- stack(readydata[,c("Phosphorus","Nitrogen","E.Coli")])
 numericaldata<- as.data.frame(readydata[,c("Phosphorus","Nitrogen","E.Coli")])
 
-write.csv(readydata,"C:/Users/angel/Desktop/vuw/stat394/assignment/project/cleaned.csv")
+
+write.csv(readydata,"C:/Users/angel/Documents/GitHub/Group6-Project/Data/transition.csv")
+
+cleaned<- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/transition.csv")
+colnames(cleaned)[1]<-"num_id"
+write.csv(cleaned,"C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
 
 ```

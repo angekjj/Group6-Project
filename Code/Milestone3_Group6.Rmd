@@ -1,0 +1,219 @@
+---
+title: "Milestone 3"
+author: "Group 6 "
+date: "2022-08-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(300399182, kind="Mersenne-Twister")
+require(ggplot2)
+require(ggthemes)
+require(extrafont)
+require(matlib)
+require(reshape)
+require(corrplot)
+require(tidyverse)
+require(mapdata)
+```
+
+The NZ river dataset includes three categorical variables (Dominant landcover, Trend and Percent of annual change) and six numerical variables (E.Coli, Phosphorus, Nitrogen, Turbidity, Latitude and Longitude), which we will be conducting exploratory data analyses on.
+
+# [EDA for categorical variables]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+df<- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
+```
+
+Values in each categorical variable:
+
+```{r warning=FALSE,message=FALSE}
+unique(df$dominant_landcover)
+unique(df$Trend)
+unique(df$percent_annual_change)
+```
+
+### [Distribution of dominant land cover types]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(df)+
+  geom_histogram(aes(x=dominant_landcover),stat="count", color='turquoise4')+
+  labs(x="Dominant Landcover",y="Count",title="Distribution of Four Main Landcover Types")
+```
+
+We can see in this graph, the distribution of dominant land cover over the monitored river sites throughout New Zealand. Pastoral land cover appeared to be the greatest among sites, followed by native land cover and comparably, very little land cover was exotic forest and urban areas.
+
+### [Distribution of river quality trend]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(df)+
+  geom_histogram(aes(x=factor(Trend,c('Worsening','Indeterminate','Improving'))),stat="count", color='turquoise4')+
+  labs(x=" ",y="Count",title="Distribution of River Quality Trend")
+```
+
+The graph above shows the distribution of trends in river quality, describing the direction of change of river health indicators. Trends in river health indicators were found to be worsening, indeterminate or improving. Most trends were shown to be indeterminate, closely followed by worsening trends. An improving trend was the least common for river health indicators across NZ.
+
+### [Distribution of quality annual change]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(df)+
+  geom_histogram(aes(x=factor(percent_annual_change,level=c('>2% worsening','1-2% worsening','0-1% worsening','0-1% improving','1-2% improving','>2% improving'))),stat="count", color='turquoise4')+
+  labs(x=" ",y="Count",title="Distribution of Quality Annual Change")+
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+```
+
+This graph depicts the distribution of annual change in river quality indicators, over the NZ river sites sampled. The % of annual change (either worsening or improving) was recorded for each indicator in each river site. We can see that the highest count of river indicators showed 0-1% annual change (worsening), followed by 0-1% improving, then by 1-2% and \>2% worsening. 1-2% and \>2% improving were the least common annual changes among river sites.
+
+### [Distribution of trend in different land cover]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(df)+
+  geom_histogram(aes(x=dominant_landcover,fill=Trend),position = "dodge",stat="count", color='turquoise4')+
+  labs(x="Dominant Landcover",y="Count",title="Distribution of Trend in Four Main Landcovers")
+```
+
+This graph shows the distribution of river quality trends over the four types of main landcover. Indeterminate trends appear to be the greatest in all landcover types, except for exotic forest for which it is mostly worsening. Trends of improvement appear to be the least common in all landcover types, except for urban areas, for which worsening trends are dominant.
+
+### [Element Distribution Across Landcovers]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+original<- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/river-water-quality-trends-20082017-19982017-and-19902017.csv")
+unstacked<- original[original$np_id_name==c("E. coli","Total phosphorus","Turbidity","Total nitrogen"),]
+ggplot(unstacked)+
+  geom_boxplot(aes(factor(dominant_landcover),n_obs,fill=np_id_name))+
+  labs(x="",y="Count",title="Element Distribution Across Landcovers",fill="Element")
+```
+
+The above graph depicts the distribution of river health elements/indicators over different land types. E.Coli tends to show low counts across land types, and much lower ranges than other indicators. Total nitrogen appears to be the greatest (mean/median) in exotic forest and native land, with large ranges. Total phosphorus shows to be greatly positively skewed and spread out for most land types. Conversely, turbidity appears to be greatly negatively skewed for all land types.
+
+### [Element Distribution Across Annual Change Category]{.underline}
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(unstacked)+
+  geom_boxplot(aes(factor(percent_annual_change2,level=c('>2% worsening','1-2% worsening','0-1% worsening','0-1% improving','1-2% improving','>2% improving')),n_obs,fill=np_id_name))+
+  labs(x="",y="Count",title="Element Distribution Across Annual Change Category",fill="Element")+
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+```
+
+Finally, the above graph shows the distribution of annual change for each of the river health indicators. Data for E.Coli appears to be relatively similar across all levels of annual change. Total nitrogen, phosphorus and turbidity show high counts in 1-2% worsening and 0-1% improving categories, along with being greatly skewed.
+
+## [EDA of the numerical variables]{.underline} 
+
+The following EDA investigates the numerical variables; the river health indicators of E.Coli, Phosphorus, Nitrogen, Turbidity and the respective locations (latitude and longitude) of the rivers.
+
+```{r EDA, echo=FALSE, warning=FALSE,message=FALSE}
+waterq<-read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv", header=T) #numeric variables along side with chr
+wq<-data.frame(waterq$num_id, waterq$E.Coli, waterq$Phosphorus, waterq$Nitrogen, waterq$Longitude, waterq$Latitude, waterq$Turbidity)
+names(wq)<-c("num_id","E.Coli","Phosphorus","Nitrogen","Longitude","Latitude","Turbidity") #rename cols in wq
+summary(wq) #Summary means, IQR, median..
+wq$num_id<-as.factor(wq$num_id) #sort by num_id 
+wq.melt<-melt(wq)
+```
+
+### [Boxplots of river health indicators]{.underline}
+
+```{r boxplot, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(data=wq.melt, aes(factor(variable), value)) + 
+  geom_boxplot() + 
+  facet_wrap(~variable, scale="free")
+
+
+```
+
+The boxplots above show the distributions of data measured across the NZ river sites for river quality indicators and locations. E.Coli shows very concentrated data and the presence of outliers. Phosphorus appears to be evenly spread with a higher median. Nitrogen shows concentration of data in the upper quartile, and a lower median than phosphorus. Turbidity shows a similar distribution to nitrogen.
+
+### [Boxplots with a logarithmic scale]{.underline}
+
+```{r boxplot with logarithmic scale, echo=FALSE, warning=FALSE,message=FALSE}
+ggplot(data=wq.melt, aes(factor(variable), value)) + 
+  geom_boxplot() + 
+facet_wrap(~variable, scale="free") + 
+   scale_y_log10() 
+```
+
+### [Correlation plot of the river quality indicators]{.underline}
+
+```{r corrplot, echo=FALSE, warning=FALSE,message=FALSE}
+wq1 <- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
+wq1 <- data.frame(wq1$E.Coli,wq1$Phosphorus,wq1$Nitrogen,wq1$Turbidity)
+wq1.melt <- melt(data=wq1,id.vars = c("wq1.Turbidity"), variable.name = "Numeric-variable")
+names(wq1)<-c("E.Coli","Phosphorus", "Nitrogen", "Turbidity")
+cor1 = cor(wq1)
+corrplot(cor1, method = "number")
+```
+
+The correlation plot above shows the correlations between each of the NZ river quality indicators. All pairs of variables produced positive correlations. The highest correlation is seen between nitrogen and turbidity (0.50).
+
+### [Scatterplots of pair correlations]{.underline}
+
+```{r Scatter plot, echo=FALSE, warning=FALSE,message=FALSE}
+plot(x=wq1$E.Coli, y=wq1$Turbidity, # Correlation between Escherichia coli and Turbidity
+     xlab = "E.Coli",
+     ylab = "Turbidity",
+     main = "Escherichia coli VS Water Turbidity")
+
+plot(x=wq1$Nitrogen, y=wq1$Turbidity, # Correlation between Nitrogen and Turbidity
+     xlab = "Nitrogen",
+     ylab = "Turbidity",
+     main = "Nitrogen VS Water Turbidity")
+
+plot(x=wq1$Phosphorus, y=wq1$Turbidity,# Correlation between Phosphorus and Turbidity
+     xlab = "Phosphorus",
+     ylab = "Turbidity",
+     main = "Phosphorus VS Water Turbidity")
+```
+
+### [Normality and variance]{.underline}
+
+```{r QQ plot, warning=FALSE,message=FALSE}
+mod1 <- lm(wq1$E.Coli ~ as.factor(wq1$Turbidity), data = wq1)
+
+mod1resid <- mod1$res
+mod1fitted <- mod1$fit
+par(mfrow=c(1,2))
+plot(mod1resid~mod1fitted, xlab="Fitted values", ylab="Residuals") 
+
+qqnorm(mod1resid,main="")
+qqline(mod1resid) #residual vs fitted: Bands not normally distributed about zero with differing ‘heights’ suggests non- constant variance Q-Q plot: Data not normally distributed, it does not show a straight line
+
+mod1 <- lm(wq1$Nitrogen ~ as.factor(wq1$Turbidity), data = wq1)
+
+mod1resid <- mod1$res
+mod1fitted <- mod1$fit
+par(mfrow=c(1,2))
+plot(mod1resid~mod1fitted, xlab="Fitted values", ylab="Residuals") 
+
+qqnorm(mod1resid,main="")
+qqline(mod1resid) #residual vs fitted: Bands not normally distributed about zero with differing ‘heights’ suggests non- constant variance Q-Q plot: Data not normally distributed, it does not show a straight line
+
+mod1 <- lm(wq1$Phosphorus ~ as.factor(wq1$Turbidity), data = wq1)
+
+mod1resid <- mod1$res
+mod1fitted <- mod1$fit
+par(mfrow=c(1,2))
+plot(mod1resid~mod1fitted, xlab="Fitted values", ylab="Residuals") 
+
+qqnorm(mod1resid,main="")
+qqline(mod1resid) #residual vs fitted: Bands not normally distributed about zero with differing ‘heights’ suggests non- constant variance Q-Q plot: Data not normally distributed, it does not show a straight line
+
+
+
+```
+
+The above plots show residuals vs fitted values and normal Q-Q plots between variables. For all pairs of variables; E.Coli and turbidity, nitrogen and turbidity and phosphorus and turbidity, bands are not normally distributed about zero, with differing 'heights'. This suggests non- constant variance. The Q-Q plots indicate that the data is not normally distributed, as it does not show a straight line.
+
+### [Map of river sites monitored across NZ]{.underline}
+
+```{r Map Latitude and Longitude, echo=FALSE, warning=FALSE,message=FALSE}
+Wmap <- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
+Wmap <- data.frame(Wmap$Longitude,Wmap$Latitude) 
+NZmap<-map_data("nzHires")
+ggplot(NZmap, aes(x=long,y=lat)) +   # Map the longtitude and latitude at NZ
+  geom_point(size=0.5)+
+  geom_point(data=Wmap,aes(x=Wmap.Longitude,y=Wmap.Latitude, colour="red"), size=0.1)
+  
+
+```
+
+The above map shows the coordinates (using variables of latitude and longitude) of river sites measured across New Zealand.
