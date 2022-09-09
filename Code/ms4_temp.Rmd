@@ -7,7 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-set.seed(300399182, kind="Mersenne-Twister")
+#set.seed(300399182, kind="Mersenne-Twister")
 require(ggplot2)
 require(ggthemes)
 require(extrafont)
@@ -15,15 +15,16 @@ require(matlib)
 require(reshape)
 require(corrplot)
 require(tidyverse)
+require(car)
 require(mapdata)
 ```
 
 ```{r}
-riverquality<-read.csv("ms4cleaned.csv")
+riverquality<-read.csv("../Data/ms4cleaned.csv")
 riverquality<-riverquality[,-1]
-rq08<-read.csv("rq08.csv")
-rq90<-read.csv("rq90.csv")
-rq98<-read.csv("rq98.csv")
+rq08<-read.csv("../Data/rq08.csv")
+rq90<-read.csv("../Data/rq90.csv")
+rq98<-read.csv("../Data/rq98.csv")
 
 num.time<-riverquality[,c("period","Phosphorus","Nitrogen","E.Coli","Turbidity")]
 num.time$period <- as.factor(num.time$period)
@@ -98,7 +99,7 @@ pchisq(d.new3, df = 4, lower.tail = FALSE)
 ## Cleaned data (overall)
 
 ```{r equality}
-waterq<-read.csv("ms4cleaned.csv", header=T)
+waterq<-read.csv("../Data/ms4cleaned.csv", header=T)
 wq<-data.frame(waterq$num_id, waterq$E.Coli,waterq$Phosphorus, waterq$Nitrogen,waterq$Longitude, waterq$lat, waterq$Turbidity)
 summary(wq)
 ```
@@ -136,7 +137,6 @@ Residual vs fitted values are not normally distributed about zero, with differin
 Levene Test: $H_0:$ equal variance $H_1:$ not all variance are equal
 
 ```{r Levene Test}
-library(car)
 leveneTest(waterq$E.Coli ~ as.factor(waterq$Turbidity), data = waterq)
 ```
 
@@ -163,7 +163,7 @@ p-value = 0, therefore there is evidence that E.Coli differs across Turbidity.
 ## Period 1 (1990-2017)
 
 ```{r equality 90}
-waterq90<-read.csv("rq90.csv", header=T)
+waterq90<-read.csv("../Data/rq90.csv", header=T)
 wq90<-data.frame(waterq90$num_id, waterq90$E.Coli,waterq90$Phosphorus, waterq90$Nitrogen,waterq90$Longitude, waterq90$lat, waterq90$Turbidity)
 summary(wq90)
 ```
@@ -227,7 +227,7 @@ p-value = 0, therefore there is evidence that E.Coli differs across Turbidity
 ## Period 2 (1998-2017)
 
 ```{r equality 98}
-waterq98<-read.csv("rq98.csv", header=T)
+waterq98<-read.csv("../Data/rq98.csv", header=T)
 wq98<-data.frame(waterq98$num_id, waterq98$E.Coli,waterq98$Phosphorus, waterq98$Nitrogen,waterq98$Longitude, waterq98$lat, waterq98$Turbidity)
 summary(wq98)
 ```
@@ -291,7 +291,7 @@ p-value = 0, therefore there is evidence that E.Coli differs across Turbidity
 ## Period 3 (2008-2017)
 
 ```{r equality 08}
-waterq08<-read.csv("rq08.csv", header=T)
+waterq08<-read.csv("../Data/rq08.csv", header=T)
 wq08<-data.frame(waterq08$num_id, waterq08$E.Coli,waterq08$Phosphorus, waterq08$Nitrogen,waterq08$Longitude, waterq08$lat, waterq08$Turbidity)
 summary(wq08)
 ```
