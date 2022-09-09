@@ -1,0 +1,49 @@
+---
+title: "EDA"
+author: "Angelina Chen 300608063"
+date: "2022-08-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r echo=FALSE}
+riverquality<- read.csv("C:/Users/angel/Desktop/vuw/stat394/assignment/project/riverquality.csv")
+cleaned<- riverquality[,c("period","s_id","np_id_name","np_id_units","n_obs","dominant_landcover","long","lat","trend_category2","percent_annual_change2")]
+
+
+
+
+turbidity<- cleaned[cleaned$np_id_name=="Turbidity",c("s_id","n_obs")]
+colnames(turbidity)[colnames(turbidity)=="n_obs"]<- "Turbidity"
+
+ecoli<- cleaned[cleaned$np_id_name=="E. coli",c("s_id","n_obs")]
+colnames(ecoli)[colnames(ecoli)=="n_obs"]<- "E.Coli"
+
+phos<- cleaned[cleaned$np_id_name=="Total phosphorus",c("s_id","n_obs")]
+colnames(phos)[colnames(phos)=="n_obs"]<- "Phosphorus"
+
+nitrogen<- cleaned[cleaned$np_id_name=="Total nitrogen",c("s_id","n_obs","dominant_landcover","long","lat","trend_category2","percent_annual_change2")]
+colnames(nitrogen)[colnames(nitrogen)=="n_obs"]<- "Nitrogen"
+colnames(nitrogen)[colnames(nitrogen)=="long"]<- "Longitude"
+colnames(nitrogen)[colnames(nitrogen)=="lat"]<- "Latitude"
+colnames(nitrogen)[colnames(nitrogen)=="trend_category2"]<- "Trend"
+colnames(nitrogen)[colnames(nitrogen)=="percent_annual_change2"]<- "percent_annual_change"
+
+
+
+
+readydata<- merge(ecoli,phos,by="s_id")
+readydata<- merge(readydata,nitrogen,by="s_id")
+readydata<- merge(readydata,turbidity,by="s_id")
+
+
+stackdata<- stack(readydata[,c("Phosphorus","Nitrogen","E.Coli")])
+numericaldata<- as.data.frame(readydata[,c("Phosphorus","Nitrogen","E.Coli")])
+
+write.csv(readydata,"C:/Users/angel/Desktop/vuw/stat394/assignment/project/cleaned.csv")
+
+```
