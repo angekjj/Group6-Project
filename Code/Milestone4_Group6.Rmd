@@ -7,7 +7,6 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#set.seed(300399182, kind="Mersenne-Twister")
 require(ggplot2)
 require(ggthemes)
 require(extrafont)
@@ -15,8 +14,8 @@ require(matlib)
 require(reshape)
 require(corrplot)
 require(tidyverse)
-require(car)
 require(mapdata)
+require(car)
 ```
 
 ```{r}
@@ -43,9 +42,9 @@ id.vars = "period",
 variable.name = "Compound")
 ```
 
-## Mahalanobis distance 
+# Mahalanobis distance 
 
-The distance between x1500 and the compound model is 2.250291 , and the dataset has a probability of 0.69 falling into this distance
+The distance between x1500 and the compound model is 2.250291, and the dataset has a probability of 0.69 falling into this distance (Fig. 1). 
 
 ```{r, fig.cap= "Distribution of the Mahalanobis distance of river observations to the aggregated model"}
 
@@ -76,7 +75,7 @@ ylab("Histogram and density")
 
 ```
 
-The new measure is consistent with both the first and second time period- 1990-2017 and 1998-2017, and closest to 1998-2017.
+The new measure is consistent with both the first and second time periods; 1990-2017 and 1998-2017, and closest to 1998-2017.
 
 ```{r}
 est.mu1 <- colMeans(subset(num.time, period=="1990-2017")[,-1])
@@ -96,22 +95,24 @@ pchisq(d.new2, df = 4, lower.tail = FALSE)
 pchisq(d.new3, df = 4, lower.tail = FALSE)
 ```
 
-## Cleaned data (overall)
-
-```{r equality}
+# Cleaned data (overall)
+We can see that all river health indicators; E.Coli, Phosphorus, Nitrogen and Turbidity peak at a value of around 110 (Fig. 2). Phosphorus, Nitrogen and turbidity also show smaller peaks at 250 and 340 (Fig. 2). 
+```{r equality, echo=FALSE}
 waterq<-read.csv("../Data/ms4cleaned.csv", header=T)
 wq<-data.frame(waterq$num_id, waterq$E.Coli,waterq$Phosphorus, waterq$Nitrogen,waterq$Longitude, waterq$lat, waterq$Turbidity)
 summary(wq)
 ```
 
-```{r plotting, fig.cap="Histograms for river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity in NZ rivers"}
+```{r plotting, fig.cap="Histograms for river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity in NZ rivers", echo=FALSE}
+par(mfrow=c(2,2))
 hist(waterq$E.Coli)
 hist(waterq$Nitrogen)
 hist(waterq$Phosphorus) 
 hist(waterq$Turbidity)
+
 ```
 
-```{r, fig.cap= "Boxplots showing the distributions of NZ river health and information variables"}
+```{r, fig.cap= "Boxplots showing the distributions of NZ river health and information variables", echo=FALSE}
 waterq.melt<-melt(waterq)
 waterq$num_id<-as.factor(waterq$num_id)
 ggplot(data=waterq.melt, aes(factor(variable), value)) + 
@@ -119,9 +120,9 @@ geom_boxplot() +
 facet_wrap(~variable, scale="free")
 ```
 
-In this case, we fit the "E.Coli" with "Turbidity" to assign a Fitted vs Residual
+In this case, we fit the river health indicators; "E.Coli" with "Turbidity" to assign a plot of Fitted vs Residual values. 
 
-```{r Fit, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers"}
+```{r Fit, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers", echo=FALSE}
 mod1 <- lm(waterq$E.Coli ~ as.factor(waterq$Turbidity), data = waterq)
 
 mod1resid <- mod1$res
@@ -129,10 +130,10 @@ mod1fitted <- mod1$fit
 par(mfrow=c(1,2))
 plot(mod1resid~mod1fitted, xlab="Fitted values", ylab="Residuals") 
 qqnorm(mod1resid,main="")
-qqline(mod1resid) # qqplot shows the fitted data has no normal distribution 
+qqline(mod1resid) 
 ```
 
-Residual vs fitted values are not normally distributed about zero, with differing 'heights'. This suggests non-constant variance. The Normal Q-Q plot shows that the data is not normally distributed, as it does not show a straight line.
+Residual vs fitted values are not normally distributed about zero, with differing 'heights' (Fig. 4). This suggests non-constant variance. The Normal Q-Q plot shows that the data is not normally distributed, as it does not show a straight line (Fig. 4).
 
 Levene Test: $H_0:$ equal variance $H_1:$ not all variance are equal
 
@@ -142,7 +143,7 @@ leveneTest(waterq$E.Coli ~ as.factor(waterq$Turbidity), data = waterq)
 
 Levene's test produces the F-statistic = 9.0905, and p-value = 2.2e-16, which provides strong evidence to reject the null hypothesis of equal variance.
 
-We have the Fitted data that has no constant variance and is not distributed normally. Therefore, we use permutation test instead of ANOVA.
+We have the fitted data that has no constant variance and is not distributed normally. Therefore, we use permutation test instead of ANOVA.
 
 Permutation: $H_0:$ There is no difference in E.Coli across Turbidity $H_1:$ E.Coli differs across Turbidity
 
@@ -160,24 +161,23 @@ p
 
 p-value = 0, therefore there is evidence that E.Coli differs across Turbidity.
 
-## Period 1 (1990-2017)
-
-```{r equality 90}
+# Period 1 (1990-2017)
+E.Coli, Nitrogen and Turbidity show peaks at values around 110, whereas Phosphorus peaks at a high value of 350 (Fig. 5). This concentration of the E.Coli and Phosphorus data towards these value is evident in the boxplots (Fig. 6). We can also see a range of measurements of Nitrogen and Turbidity in NZ rivers during this period (1990-2017) (Fig. 5, Fig, 6). 
+```{r equality 90, echo=FALSE}
 waterq90<-read.csv("../Data/rq90.csv", header=T)
 wq90<-data.frame(waterq90$num_id, waterq90$E.Coli,waterq90$Phosphorus, waterq90$Nitrogen,waterq90$Longitude, waterq90$lat, waterq90$Turbidity)
 summary(wq90)
 ```
 
-```{r plotting 90, fig.cap="Histograms showing NZ river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity from 1990-2017"}
+```{r plotting 90, fig.cap="Histograms showing NZ river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity from 1990-2017", echo=FALSE}
+par(mfrow=c(2,2))
 hist(waterq90$E.Coli)
 hist(waterq90$Nitrogen)
 hist(waterq90$Phosphorus)
 hist(waterq90$Turbidity)
 ```
 
-Fit E.Coli with Turbidity to analyse the difference in all 3 periods.
-
-```{r, fig.cap="Boxplots showing the distributions of NZ river health and information variables from 1990-2017"}
+```{r, fig.cap="Boxplots showing the distributions of NZ river health and information variables from 1990-2017", echo=FALSE}
 waterq90.melt<-melt(waterq90)
 waterq90$num_id<-as.factor(waterq90$num_id)
 ggplot(data=waterq90.melt, aes(factor(variable), value)) + 
@@ -185,7 +185,9 @@ geom_boxplot() +
 facet_wrap(~variable, scale="free")
 ```
 
-```{r Fit 90, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers; 1990-2017"}
+Fit E.Coli with Turbidity to analyse the difference in all 3 periods.
+
+```{r Fit 90, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers; 1990-2017", echo=FALSE}
 mod2 <- lm(waterq90$E.Coli ~ as.factor(waterq90$Turbidity), data = waterq90)
 
 mod2resid <- mod2$res
@@ -204,13 +206,13 @@ Levene Test: $H_0:$ equal variance $H_1:$ not all variance are equal
 leveneTest(waterq90$E.Coli ~ as.factor(waterq90$Turbidity), data = waterq90)
 ```
 
-The F-statistic = 1.7753, and p-value = 0.008519, Levene's test shows strong evidence to reject the null hypothesis of equal variance.
+The F-statistic = 1.7753, and p-value = 0.008519 of  Levene's test provides strong evidence to reject the null hypothesis of equal variance.
 
-We have the Fitted data that has no constant variance and is not distributed normally. Therefore we use permutation test instead of anova.
+We have the fitted data that has no constant variance and is not distributed normally. Therefore, we use permutation test instead of ANOVA to test the equality of means.
 
-Permutation: $H_0:$ There is no difference in E.Coli across Turbidity $H_1:$ E.Coli differs across Turbidity
+Permutation: $H_0:$ There is no difference in E.Coli across Turbidity $H_1:$ E.Coli differs across Turbidity 
 
-```{r Permutation 90}
+```{r Permutation 90, echo=FALSE}
 Fobs<-anova(mod2)$F[1]
 Fnull<-rep(NA,2000)
 for(t in 1:2000)
@@ -222,26 +224,24 @@ p<-sum(Fnull>=Fobs)/2000
 p
 ```
 
-p-value = 0, therefore there is evidence that E.Coli differs across Turbidity
-
-## Period 2 (1998-2017)
-
-```{r equality 98}
+p-value = 0, therefore, there is evidence that E.Coli differs across turbidity in NZ rivers, from 1990-2017. 
+# Period 2 (1998-2017)
+We can see that there tends to be similar trends in river health indicators to those from 1990-2017. However, E.Coli shows a greater range of measurements and frequencies of all indicators are higher (Fig. 8, Fig. 9). 
+```{r equality 98, echo=FALSE}
 waterq98<-read.csv("../Data/rq98.csv", header=T)
 wq98<-data.frame(waterq98$num_id, waterq98$E.Coli,waterq98$Phosphorus, waterq98$Nitrogen,waterq98$Longitude, waterq98$lat, waterq98$Turbidity)
 summary(wq98)
 ```
 
-```{r plotting 98, fig.cap="Histograms for river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity in NZ rivers from 1998-2017"}
+```{r plotting 98, fig.cap="Histograms for river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity in NZ rivers from 1998-2017", echo=FALSE}
+par(mfrow=c(2,2))
 hist(waterq98$E.Coli)
 hist(waterq98$Nitrogen)
 hist(waterq98$Phosphorus)
 hist(waterq98$Turbidity)
 ```
 
-Fit E.Coli with Turbidity to analysis the difference in all 3 periods.
-
-```{r, fig.cap="Boxplots of the distributions of NZ river health and information variables from 1998-2017"}
+```{r, fig.cap="Boxplots of the distributions of NZ river health and information variables from 1998-2017", echo=FALSE}
 waterq98.melt<-melt(waterq98)
 waterq98$num_id<-as.factor(waterq98$num_id)
 ggplot(data=waterq98.melt, aes(factor(variable), value)) +
@@ -249,7 +249,9 @@ geom_boxplot() +
 facet_wrap(~variable, scale="free")
 ```
 
-```{r Fit 98, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers; 1998-2017"}
+Fit E.Coli with Turbidity to analyse the difference in all 3 periods.
+
+```{r Fit 98, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers; 1998-2017", echo=FALSE}
 mod3 <- lm(waterq98$E.Coli ~ as.factor(waterq98$Turbidity), data = waterq98)
 
 mod3resid <- mod3$res
@@ -260,7 +262,7 @@ qqnorm(mod3resid,main="")
 qqline(mod3resid) # qqplot shows the fitted data has no normal distribution 
 ```
 
-Residual vs fitted values are not normally distributed about zero, with differing 'heights'. This suggests non-constant variance. The Normal Q-Q plot shows that the data is not normally distributed, as it does not show a straight line.
+Residual vs fitted values are not normally distributed about zero, with differing 'heights'. This suggests non-constant variance (Fig. 10). The Normal Q-Q plot shows that the data is not normally distributed, as it does not show a straight line (Fig. 10). 
 
 Levene Test: $H_0:$ equal variance $H_1:$ not all variance are equal
 
@@ -286,17 +288,18 @@ p<-sum(Fnull>=Fobs)/2000
 p
 ```
 
-p-value = 0, therefore there is evidence that E.Coli differs across Turbidity
+p-value = 0, therefore there is evidence that E.Coli differs across turbidity in NZ rivers, throughout the period of 1998-2017. 
 
-## Period 3 (2008-2017)
-
-```{r equality 08}
+# Period 3 (2008-2017)
+This period tends to show lower frequencies of all river health indicators (Fig. 11, Fig. 12)
+```{r equality 08, echo=FALSE}
 waterq08<-read.csv("../Data/rq08.csv", header=T)
 wq08<-data.frame(waterq08$num_id, waterq08$E.Coli,waterq08$Phosphorus, waterq08$Nitrogen,waterq08$Longitude, waterq08$lat, waterq08$Turbidity)
 summary(wq08)
 ```
 
-```{r plotting 08, fig.cap="Histograms for river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity in NZ rivers from 2008-2017"}
+```{r plotting 08, fig.cap="Histograms for river health indicators; E.Coli, Nitrogen, Phosphorus and Turbidity in NZ rivers from 2008-2017", echo=FALSE}
+par(mfrow=c(2,2))
 hist(waterq08$E.Coli)
 hist(waterq08$Nitrogen)
 hist(waterq08$Phosphorus)
@@ -304,9 +307,7 @@ hist(waterq08$Turbidity)
 
 ```
 
-Fit E.Coli with Turbidity to analysis the difference in all 3 periods.
-
-```{r, fig.cap="Boxplots of the distributions of NZ river health and information variables from 2008-2017"}
+```{r, fig.cap="Boxplots of the distributions of NZ river health and information variables from 2008-2017", echo=FALSE}
 waterq08.melt<-melt(waterq08)
 waterq08$num_id<-as.factor(waterq08$num_id)
 ggplot(data=waterq08.melt, aes(factor(variable), value)) + 
@@ -314,7 +315,9 @@ geom_boxplot() +
 facet_wrap(~variable, scale="free")
 ```
 
-```{r Fit 08, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers; 2008-2017"}
+Fit E.Coli with Turbidity to analysis the difference in all 3 periods.
+
+```{r Fit 08, fig.cap="Plot of residuals vs. fitted values and normal Q-Q plot for E.Coli and Turbidity factors in NZ rivers; 2008-2017", echo=FALSE}
 mod4 <- lm(waterq08$E.Coli ~ as.factor(waterq08$Turbidity), data = waterq08)
 
 mod4resid <- mod4$res
@@ -325,7 +328,7 @@ qqnorm(mod4resid,main="")
 qqline(mod4resid) # qqplot shows the fitted data has no normal distribution 
 ```
 
-Residual vs fitted values are not normally distributed about zero, with differing 'heights'. This suggests non-constant variance. The Normal Q-Q plot shows that the data is not normally distributed, as it does not show a straight line.
+Residual vs fitted values are not normally distributed about zero, with differing 'heights'. This suggests non-constant variance (Fig. 13). The Normal Q-Q plot shows that the data is not normally distributed, as it does not show a straight line (Fig. 13). 
 
 Levene Test: $H_0:$ equal variance $H_1:$ not all variance are equal
 
@@ -335,7 +338,7 @@ leveneTest(waterq08$E.Coli ~ as.factor(waterq08$Turbidity), data = waterq08)
 
 The F-statistic = 4.0892, and p-value = 4.218e-14, Levene's test shows strong evidence to reject the null hypothesis of equal variance.
 
-We have the Fitted data that has no constant variance and is not distributed normally. Therefore we use permutation test instead of anova.
+Fitted data shows no homogeneity of variances and is not distributed normally. Therefore, for equality testing, we use permutation test instead of ANOVA.
 
 Permutation: $H_0:$ There is no difference in E.Coli across Turbidity $H_1:$ E.Coli differs across Turbidity
 
@@ -351,4 +354,6 @@ p<-sum(Fnull>=Fobs)/2000
 p
 ```
 
-p-value = 0, therefore there is evidence that E.Coli differs across Turbidity
+p-value = 0, therefore, there is evidence that E.Coli differs across turbidity, between 2008 and 2017. 
+
+Thus, we found evidence that E.Coli differs across turbidity in NZ rivers, across all three periods of time; 1990-2017, 1998-2017, 2008-2017. 
