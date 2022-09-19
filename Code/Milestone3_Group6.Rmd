@@ -23,7 +23,7 @@ The NZ river dataset includes three categorical variables (Dominant landcover, T
 # [EDA for categorical variables]{.underline}
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-df<- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
+df<- read.csv("../Data/cleaned.csv")
 ```
 
 Values in each categorical variable:
@@ -78,7 +78,7 @@ This graph shows the distribution of river quality trends over the four types of
 ### [Element Distribution Across Landcovers]{.underline}
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-original<- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/river-water-quality-trends-20082017-19982017-and-19902017.csv")
+original<- read.csv("../Data/river-water-quality-trends-20082017-19982017-and-19902017.csv")
 unstacked<- original[original$np_id_name==c("E. coli","Total phosphorus","Turbidity","Total nitrogen"),]
 ggplot(unstacked)+
   geom_boxplot(aes(factor(dominant_landcover),n_obs,fill=np_id_name))+
@@ -103,7 +103,7 @@ Finally, the above graph shows the distribution of annual change for each of the
 The following EDA investigates the numerical variables; the river health indicators of E.Coli, Phosphorus, Nitrogen, Turbidity and the respective locations (latitude and longitude) of the rivers.
 
 ```{r EDA, echo=FALSE, warning=FALSE,message=FALSE}
-waterq<-read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv", header=T) #numeric variables along side with chr
+waterq<-read.csv("../Data/cleaned.csv", header=T) #numeric variables along side with chr
 wq<-data.frame(waterq$num_id, waterq$E.Coli, waterq$Phosphorus, waterq$Nitrogen, waterq$Longitude, waterq$Latitude, waterq$Turbidity)
 names(wq)<-c("num_id","E.Coli","Phosphorus","Nitrogen","Longitude","Latitude","Turbidity") #rename cols in wq
 summary(wq) #Summary means, IQR, median..
@@ -135,7 +135,7 @@ facet_wrap(~variable, scale="free") +
 ### [Correlation plot of the river quality indicators]{.underline}
 
 ```{r corrplot, echo=FALSE, warning=FALSE,message=FALSE}
-wq1 <- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
+wq1 <- read.csv("../Data/cleaned.csv")
 wq1 <- data.frame(wq1$E.Coli,wq1$Phosphorus,wq1$Nitrogen,wq1$Turbidity)
 wq1.melt <- melt(data=wq1,id.vars = c("wq1.Turbidity"), variable.name = "Numeric-variable")
 names(wq1)<-c("E.Coli","Phosphorus", "Nitrogen", "Turbidity")
@@ -206,7 +206,7 @@ The above plots show residuals vs fitted values and normal Q-Q plots between var
 ### [Map of river sites monitored across NZ]{.underline}
 
 ```{r Map Latitude and Longitude, echo=FALSE, warning=FALSE,message=FALSE}
-Wmap <- read.csv("C:/Users/angel/Documents/GitHub/Group6-Project/Data/cleaned.csv")
+Wmap <- read.csv("../Data/cleaned.csv")
 Wmap <- data.frame(Wmap$Longitude,Wmap$Latitude) 
 NZmap<-map_data("nzHires")
 ggplot(NZmap, aes(x=long,y=lat)) +   # Map the longtitude and latitude at NZ
