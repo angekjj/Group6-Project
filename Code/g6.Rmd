@@ -47,16 +47,16 @@ After obtaining a wide format of data, we rename the columns and merge and stack
 The Exploratory Data Analysis is used for summarizing the variables, we also visualize variety plots to check if the dataset contains normal distributions and constant variance. 
 
 The qqplot below shows a slight departure from the assumption of normality and constant variance. 
-```{r qqplot}
+```{r qqplot,fig.cap="Normality Check"}
 knitr::include_graphics("../Figures/qqplotEDA.png")
 ```
 
 We found an interesting relationship from Coloured Histogram, both Nitrogen and Turbidity has a concided shape, there are strong evidence of a relevant relationship between Nitrogen and Turbidity.
-```{r ColorHisto}
+```{r ColorHisto,fig.cap="Turbidity Vs. Nitrogen"}
 knitr::include_graphics("../Figures/ColouredHisto.png")
 ```
 We also found some differences in 3 periods of time across the waterquality.
-```{r Pairsplot}
+```{r Pairsplot,fig.cap="Pairsplot for Turbidity and Nitrogen"}
 knitr::include_graphics("../Figures/PairsplotEDA.png")
 ```
 
@@ -65,31 +65,31 @@ EDA visualized a relevant connection between Turbidity and Nitrogen, which remin
 
 To apply the principal components, we used the function “prcomp” to load the PCA. 
 Since too many observations could differ the useful visualizations, we reduced the sample of variables to 300.
-```{r Reduced}
+```{r Reduced,fig.cap="Summary of PCA from Reduced data"}
 knitr::include_graphics("../Figures/Reduceddata.png")
 ```
 Thereafter, we made a few biplots to see the relationship among principal components. Retrieving the ggbiplot for reduced data (300 samples), we can find the biplot interpretation:
-1.	Smallest cosine of angle of contributions between corresponding variables (Nitrogen and Turbidity) in a 2-dimension graphic.
-2.	Uncorrelated variables are closed to each other
+1.	Larger cosine of angle of contributions between corresponding variables (Nitrogen and Turbidity) in a 2-dimension graphic.
+2.	Observation points are closed to each other
 3.	Similar direction of correlated variables
 
-```{r biplotsAllPeriods}
+```{r biplotsAllPeriods,fig.cap="biplot from reduced data"}
 knitr::include_graphics("../Figures/BiplotsAllPeriods.png")
 ```
 We also plot corresponding variables in the year 2008, beside the interpretation we found from all periods, interpretation in the year 2008 is:
 
 1.	The cosines of angle of contributions between corresponding variables (Nitrogen and Turbidity) are literally coincided in a 2-dimension graphic (smaller cosines than all periods)
-2.	Uncorrelated variables are closed to each other
+2.	Observation points are closed to each other
 3.	Similar direction of correlated variables
 
 According to the biplots above ,we have corresponding variables Nitrogen and Turbidity has highly relevant and positive relationship.
-```{r biplots08}
+```{r biplots08,fig.cap="Biplot for 2008 data"}
 knitr::include_graphics("../Figures/Biplots08.png")
 ```
 
 The ggpairs plot reveals correlations for 4 majority landcovers in New Zealand, but we do not find strong difference of water quality among 4 landcovers. Furthermore, comparing of other 2 variables, we find both Turbidity and Nitrogen has highly related curve. 
 
-```{r ggpairs}
+```{r ggpairs,fig.cap="Pairsplot for All Variables of Interest with Landcover Type"}
 knitr::include_graphics("../Figures/ggpairsPCA.png")
 ```
 
@@ -121,7 +121,7 @@ bg=c("red", "green", "blue")[data$period],
 pch=21)
 ```
 
-We can see scatterplots of each combination of variables and their correlation coefficients. Observations seem to be grouped into periods, however, some pairs of variables exhibit overlap between periods. Turbidity and nitrogen appear to have the highest correlation of 0.50 (Fig...). 
+We can see scatterplots of each combination of variables and their correlation coefficients. Observations seem to be grouped into periods, however, some pairs of variables exhibit overlap between periods. Turbidity and nitrogen appear to have the highest correlation of 0.50 (Fig8). 
 
 The data was split into subsets of 60% and 40% of the data, to be used as training and testing data, respectively. 
 ```{r}
@@ -155,19 +155,20 @@ ldahist(data=Pred$x[,1], g=Train$period)
 ldahist(data=Pred$x[,2], g=Train$period)
 ```
 
-For LD1, there is large separation and little overlap between periods, reflecting 99.65% separation (Fig ...). Conversely, we can see that there is little separation (0.35%) and substantial overlap between periods in LD2.
+For LD1, there is large separation and little overlap between periods, reflecting 99.65% separation (Fig10). Conversely, we can see that there is little separation (0.35%) and substantial overlap between periods in LD2.
 
-```{r ggord}
+```{r ggord,fig.cap="LD1 and LD2"}
 knitr::include_graphics("../Figures/ggord.png")
 ```
-We can see that three clusters of observations exist, indicating the three time periods. However, there is some overlap on the right side, in which observations in periods 1990-2017 and 1998-2017 overlap with the cluster for 2008-2017. (Fig...) 
+
+We can see that three clusters of observations exist, indicating the three time periods. However, there is some overlap on the right side, in which observations in periods 1990-2017 and 1998-2017 overlap with the cluster for 2008-2017. (Fig11) 
 
 
 ```{r, partition plot, fig.cap="Partition Plot using the training data for river health observations over the three periods; 1990-2017, 298-2017 and 2008-2017"}
 partimat(period~., data=Train, method="lda")
 ```
 
-The partition plot displays the classification of each observation in the training dataset, based on the LDA model, for each pair of variables. The top row exhibits much greater error rates (>0.5), indicating the greater occurrence of observations predicted to be in the incorrect periods. The bottom row, interestingly all pairs including phosphorus, shows much smaller error rates, indicating a lower amount of observations falling outside their predicted period (Fig ...). 
+The partition plot displays the classification of each observation in the training dataset, based on the LDA model, for each pair of variables. The top row exhibits much greater error rates (>0.5), indicating the greater occurrence of observations predicted to be in the incorrect periods. The bottom row, interestingly all pairs including phosphorus, shows much smaller error rates, indicating a lower amount of observations falling outside their predicted period (Fig12). 
 
 ```{r RealisticConfusionMatrixLDA, fig.cap="Realistic Confusion Matrix for the LDA using testing data for river health observations over three periods 1990-2017, 2998-2017 and 2008-2017"}
 #Optimistic
