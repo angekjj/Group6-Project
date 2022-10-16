@@ -3,6 +3,12 @@ title: "Understanding New Zealand River Water Quality during 1990-2017"
 author: "Group 6: Georgia Shank, Ryan Feng, Angelina Chen"
 date: "`r Sys.Date()`"
 output: pdf_document
+
+header-includes:
+- \usepackage{bbm}
+- \usepackage{float}
+- \floatplacement{figure}{H}
+
 ---
 
 ```{r setup, include=FALSE}
@@ -134,7 +140,7 @@ Train <- data[ind=="Train",]
 Test <-  data[ind=="Test",]
 ```
 
-## Linear Discriminant Analysis
+### Linear Discriminant Analysis
  
 ```{r LDA}
 (LDA <- lda(period ~ Turbidity+Nitrogen+E.Coli+Phosphorus, data=Train))
@@ -195,7 +201,7 @@ The realistic confusion matrix using the test data shows that of all the observa
 
 Of all observations where the prediction is 2008-2017, 100% of them were actually 2008-2017. Where the prediction is 1998-2017, 14% of observations were from 2008-2017 and 86% were actually from 1998-2017. Finally, where the prediction was 1990-2017, 12.2% of observations were 2008-2017 and 87.8% were actually from 1990-2017.
 
-## Maximum Likelihood Classification Model (Naïve Bayes)
+### Maximum Likelihood Classification Model (Naïve Bayes)
 
 ```{r}
 set.seed(1234567890, kind="Mersenne-Twister")
