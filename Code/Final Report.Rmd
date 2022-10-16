@@ -233,12 +233,18 @@ The realistic confusion matrix shows that 93.4% of observations with the target 
 
 Observations predicted as 2008-2017, 98.7% of them were correct and 1.3% were actually belonging to 1990-2017. 1.9% of observations predicted as 1998-2017 were 2008-2017, and 98.1% were correctly predicted. Finally, 9.5% of observations predicted as 1990-2017 were instead 2008-2017 and 90.5% were correctly predicted. 
 
+## DISCUSSION
+The strong relationship between nitrogen and turbidity is particularly interesting as this pattern has also been observed by freshwater ecologist Mike Joy. Increases in nitrogen and thus, turbidity, are largely explained by the increase in agricultural runoff of nutrients from fertilisers used on farms (Joy, 2019).  Phosphorus is also a nutrient that is associated with agricultural runoff. Interestingly, phosphorus was found to largely contribute to classifying periods of time. Therefore, it could be interesting for further research into how phosphorus has changed over time, with the intensification of the agricultural industry. Agricultural runoff can be detrimental for the health of freshwater ecosystems and therefore, the influence of nitrogen and phosphorus is important to focus future research efforts (Larned, 2018). The analyses of river health indicators, how they interact with each other and how they change over time, is crucial in informing conservation efforts and policies to protect our beautiful rivers.
+
+
 ## CONCLUSION
 Principal Component analysis reveals a highly relevant relationship between Nitrogen and Turbidity, since interpretation of biplots shows closesd angle between Nitrogen and Turbidity, in specifically period of 2008-2017, angle was nearly coincided, the correlation coefficient (cosine) was the largest out of 4 corresponding values, all angles among 4 variables are less than 90 degrees, therefore we can say nitrogen and turbidity are positive correlated, and Nitrogen can differ the water quality in New Zealand.
 The linear discriminant analysis showed that with 92.4% accuracy, we could classify observations from our data into time periods using river health indicators, with phosphorus being the greatest contributor. However, the Maximum Likelihood Classification model proved to show greater accuracy in predicting periods of observations, with an accuracy rate of 96.48%. This indicates that distinct patterns of river health indicators exist for each of the periods 1990-2017, 1998-2017 and 2008-2017.  Thus, this shows that river health indicators could differ greatly over periods time.
 
 
 ## BIBLIOGRAPHY 
+Joy, M. (2019). HOW WE FAILED TO PROTECT FRESHWATER IN NEW ZEALAND; WILL THE NEW GOVERNMENT INITIATIVES MAKE A DIFFERENCE? Wellington: VUW.
+
 Scott Larned, A. W. (2018). Water Quality State and Trends in New Zealand Rivers. Christchunrch: Ministry for the Environment.
 
 Tiseo, I. (2022, August 2). Leading clean waters scores worldwide as of 2021, by select country. Retrieved from Statista: https://www.statista.com/statistics/1143413/clean-water-index-region-globally/
