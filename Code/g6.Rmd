@@ -1,5 +1,5 @@
 ---
-title: "Understanding New Zealand River Water Quality during 1980-2017"
+title: "Understanding New Zealand River Water Quality during 1990-2017"
 author: "Group 6: Georgia Shank, Ryan Feng, Angelina Chen"
 date: "`r Sys.Date()`"
 output: pdf_document
